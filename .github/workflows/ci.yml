@@ -1,0 +1,75 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        # 3.9 是 pyproject requires-python 声明的下限。
+        # 测下限，否则那个声明就是一句没人验过的话。
+        python: ['3.9', '3.11', '3.13']
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+      - run: |
+          python -m pip install --upgrade pip
+          pip install -e ".[dev]"
+          python -m pytest -q
+
+  # 🚨 两个包必须对同一批输入给出同一个答案。
+  #
+  # 各自的单测只证明"自己跟自己一致"，抓不到"两边各自自洽但互不兼容"——
+  # 尤其是向量的字节序：TS 把 Float32Array 的 buffer 直接写成 base64（小端），
+  # Python 若用平台默认字节序就写反，而两边的用例都不会红。
+  #
+  # 这里对账的是**已发布的 npm 包**，不是某个 checkout 的源码 ——
+  # 用户拿到的正是产物，测产物比测源码更接近真相。
+  cross-language:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: npm install longform-memory
+      - run: pip install -e "."
+      - name: Published npm package and this package must agree byte for byte
+        run: |
+          node --input-type=module -e "
+            import { encodeVector, estimateTokens, skeletonChapters, resolveThreadDeadline } from 'longform-memory';
+            console.log(JSON.stringify({
+              v304: encodeVector([3,0,4]),
+              v1234: encodeVector([1,2,3,4]),
+              tok: estimateTokens('一二三abcd'),
+              skel: skeletonChapters(1000, 980),
+              dl: resolveThreadDeadline(0, 3, 20),
+            }));
+          " > ts.json
+          cat ts.json
+          python -c "
+          import json
+          from longform_memory import encode_vector, estimate_tokens, skeleton_chapters, resolve_thread_deadline
+          ts = json.load(open('ts.json'))
+          py = {
+            'v304': encode_vector([3,0,4]),
+            'v1234': encode_vector([1,2,3,4]),
+            'tok': estimate_tokens('一二三abcd'),
+            'skel': skeleton_chapters(1000, 980),
+            'dl': resolve_thread_deadline(0, 3, 20),
+          }
+          for k in ts:
+              assert ts[k] == py[k], f'{k}: npm={ts[k]!r} != python={py[k]!r}'
+          print('cross-language OK:', py)
+          "

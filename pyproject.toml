@@ -46,8 +46,10 @@ dependencies = []
 [project.urls]
 Homepage = "https://emberspun.com/open-source/longform-memory"
 Documentation = "https://emberspun.com/open-source/longform-memory"
-Source = "https://github.com/song-finder-free/longform-memory"
-Issues = "https://github.com/song-finder-free/longform-memory/issues"
+Source = "https://github.com/emberspun/longform-memory-python"
+Issues = "https://github.com/emberspun/longform-memory-python/issues"
+# 姊妹实现。两个包的向量线格式逐字节兼容，CI 会拿**已发布的** npm 包对账。
+"TypeScript port" = "https://github.com/emberspun/longform-memory"
 
 [project.optional-dependencies]
 dev = ["pytest>=7"]

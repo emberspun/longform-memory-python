@@ -1,0 +1,40 @@
+# 🚨 凭据。这一组是从 TypeScript 仓库带过来的 —— 拆仓时漏掉过一次，
+# 被 security-scan 当场逮住（4 条 HIGH）。新建姊妹仓库时照抄这一段。
+.env
+.env.*
+!.env.example
+.npmrc
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+build/
+dist/
+*.egg-info/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.coverage
+htmlcov/
+
+# CI 里会 `npm install longform-memory` 做跨语言对账
+node_modules/
+
+# Logs
+*.log
+npm-debug.log*
+pip-log.txt
+
+# 本地数据。这个包本身不落盘，但用它的人常在仓库里放一个试验用的库，
+# 而那里面是别人的稿件。
+*.db
+*.db-journal
+*.sqlite
+*.sqlite3
+*.sqlite-wal
+*.sqlite-shm
+data/
+
+.DS_Store

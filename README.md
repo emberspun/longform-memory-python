@@ -1,12 +1,26 @@
+<div align="center">
+
+<img src="https://raw.githubusercontent.com/emberspun/longform-memory-python/main/assets/hero.webp" alt="A long row of numbered archive cards receding into the distance, with only a dozen pulled out and set aside in focus" width="100%" />
+
 # longform-memory
 
-**Constant token budget for long-form LLM writing. Chapter 1000 costs the same as chapter 10.**
+**Chapter 1000 gets the same token budget as chapter 10.**
+
+[![CI](https://github.com/emberspun/longform-memory-python/actions/workflows/ci.yml/badge.svg)](https://github.com/emberspun/longform-memory-python/actions/workflows/ci.yml)
+[![PyPI](https://img.shields.io/pypi/v/longform-memory?logo=pypi&logoColor=white&color=3775a9)](https://pypi.org/project/longform-memory/)
+[![downloads](https://img.shields.io/pypi/dm/longform-memory?color=3775a9)](https://pypi.org/project/longform-memory/)
+[![python](https://img.shields.io/pypi/pyversions/longform-memory?logo=python&logoColor=white)](https://pypi.org/project/longform-memory/)
+
+[![license](https://img.shields.io/badge/license-MIT-blue.svg)](./LICENSE)
+[![dependencies](https://img.shields.io/badge/dependencies-0-brightgreen.svg)](./pyproject.toml)
+[![types](https://img.shields.io/badge/typed-py.typed-3776ab.svg)](./src/longform_memory/py.typed)
+[![tests](https://img.shields.io/badge/tests-55%20passing-brightgreen.svg)](./tests)
+
+**[Documentation and the numbers behind it →](https://emberspun.com/open-source/longform-memory)**
 
 Zero dependencies — standard library only. Python 3.9+.
 
-<img src="https://raw.githubusercontent.com/song-finder-free/longform-memory/main/assets/hero.webp" alt="A long row of numbered archive cards receding into the distance, with only a dozen pulled out and set aside in focus" width="100%" />
-
-**[Documentation and the numbers behind it →](https://emberspun.com/open-source/longform-memory)**
+</div>
 
 ---
 
@@ -90,9 +104,12 @@ The four sections split the budget 21.7 / 33.7 / 14.5 / 30.1 %. Whatever a secti
 
 ## Interoperable with the TypeScript package
 
-There is a [TypeScript package of the same name](https://www.npmjs.com/package/longform-memory) with identical behaviour, and **the vector wire format is byte-compatible in both directions** — little-endian float32, normalised at write time, base64 encoded. Write vectors from a Node ingest job, read them from a Python worker, or the reverse.
+There is a TypeScript package of the same name — [npm](https://www.npmjs.com/package/longform-memory) · [source](https://github.com/emberspun/longform-memory) — with identical behaviour, and **the vector wire format is byte-compatible in both directions**: little-endian float32, normalised at write time, base64 encoded. Write vectors from a Node ingest job, read them from a Python worker, or the reverse.
 
-That contract is pinned by fixtures generated from the TypeScript side (`tests/test_cross_language.py`), so a drift in byte order or float width fails loudly instead of silently corrupting a store.
+That contract is pinned twice:
+
+- `tests/test_cross_language.py` holds fixtures generated from the TypeScript implementation, so a drift in byte order or float width fails loudly instead of silently corrupting a store.
+- A CI job installs the **published npm package** and makes both implementations answer the same inputs, comparing byte for byte. Each test suite alone only proves *self*-consistency — that job is the one that catches "both sides self-consistent, mutually unreadable".
 
 ## Three bugs that cost us weeks
 
@@ -112,6 +129,6 @@ That contract is pinned by fixtures generated from the TypeScript side (`tests/t
 
 ## License
 
-MIT © [song-finder-free](https://github.com/song-finder-free/longform-memory)
+MIT © [song-finder-free](https://github.com/emberspun/longform-memory)
 
 Extracted from [Emberspun](https://emberspun.com), where it runs in production on every chapter.
