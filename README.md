@@ -129,6 +129,6 @@ That contract is pinned twice:
 
 ## License
 
-MIT © [song-finder-free](https://github.com/emberspun/longform-memory)
+MIT © [Emberspun](https://github.com/emberspun)
 
 Extracted from [Emberspun](https://emberspun.com), where it runs in production on every chapter.
