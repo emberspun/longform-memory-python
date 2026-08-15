@@ -131,4 +131,4 @@ That contract is pinned twice:
 
 MIT © [Emberspun](https://github.com/emberspun)
 
-Extracted from [Emberspun](https://emberspun.com), where it runs in production on every chapter.
+Extracted from [Emberspun — an AI ebook generator for KDP and Etsy authors](https://emberspun.com), where it runs in production on every chapter.
